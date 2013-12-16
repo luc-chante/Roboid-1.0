@@ -14,6 +14,15 @@ Outils
    ([mition](http://www.lavrsen.dk/foswiki/bin/view/Motion/WebHome))
  * hotspot wifi :
    [RPI-Wireless-Hotspot](https://github.com/harryallerston/RPI-Wireless-Hotspot)
+ * Cross Compiling : [crosstool-ng](http://crosstool-ng.org/)
+   * installation sous Fedora : [Attila Kanto's Blog](https://akanto.wordpress.com/2012/10/02/cross-compiling-kernel-for-raspberry-pi-on-fedora-17-part-2/)
+
+Serveur NFS
+-----------
+
+Pour faciliter le développement du projet j'ai installé un serveur NFS qui
+exporte le dossier /home/pi/Workspace sur le réseau local.
+ * sudo mount -t nfs 192.168.x.x:/export/Workspace /home/xxx/Workspace
 
 Premiers Tests
 --------------
