@@ -30,3 +30,14 @@ Premiers Tests
 Le dossier *test* contient un sciprt trés simple pour faire tourner les roues.
 Il définie aussi une base (non définitive) de structure pour l'utilisation
 des moteurs électriques.
+
+Application Android
+-------------------
+
+Le dossier RemoteControl contient les sources de la télécommande du robot.
+Elle se présente sous la forme d'un application Android.
+
+Annexes
+-------
+
+ * motion.conf : fichier de configuration de motion (pour les version 3.2 et 3.3)
