@@ -40,4 +40,4 @@ Elle se présente sous la forme d'un application Android.
 Annexes
 -------
 
- * motion.conf : fichier de configuration de motion (pour les version 3.2 et 3.3)
+ * motion.conf : fichier de configuration de motion (pour les versions 3.2 et 3.3)
