@@ -16,3 +16,8 @@
 *.exe
 *.out
 *.app
+
+# Android RemoteControl Application
+RemoteControl/.settings
+RemoteControl/bin
+RemoteControl/gen
