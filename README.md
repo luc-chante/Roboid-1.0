@@ -9,11 +9,11 @@ donner des idées ou des envie, vous êtes les bienvenus.
 Outils
 ------
 
- * wiringPi     : communication avec les broches GPIO du connecteur P1
- * motion       : permet de faire du streaming à partir de la caméra
+ * wiringPi : communication avec les broches GPIO du connecteur P1
+ * motion : permet de faire du streaming à partir de la caméra
    ([mition](http://www.lavrsen.dk/foswiki/bin/view/Motion/WebHome))
- * hotspot wifi :
-   [RPI-Wireless-Hotspot](https://github.com/harryallerston/RPI-Wireless-Hotspot)
+ * hostapd (modifié) : [RTL8188-hostapd](https://github.com/jenssegers/RTL8188-hostapd)
+   * installation sous raspbian : [Realtek RTL8188 based access point on Raspberry Pi](http://jenssegers.be/blog/43/Realtek-RTL8188-based-access-point-on-Raspberry-Pi)
  * Cross Compiling : [crosstool-ng](http://crosstool-ng.org/)
    * installation sous Fedora : [Attila Kanto's Blog](https://akanto.wordpress.com/2012/10/02/cross-compiling-kernel-for-raspberry-pi-on-fedora-17-part-2/)
 
@@ -23,6 +23,14 @@ Serveur NFS
 Pour faciliter le développement du projet j'ai installé un serveur NFS qui
 exporte le dossier /home/pi/Workspace sur le réseau local.
  * sudo mount -t nfs 192.168.x.x:/export/Workspace /home/xxx/Workspace
+
+RTL8188-hostapd
+---------------
+
+Le dongle utilisé est à base de puse *Realtek RTL8188*. Cette puce n'est pas
+compatible avec la version de *hostapd* de Realtek. Mais Realtek publie une
+version modifié de *hostapd*. **Jens Segers** fournie sur GitHub une version
+avec un Makefile modifié qui simplifie l'intallation.
 
 Premiers Tests
 --------------
