@@ -12,7 +12,7 @@ Outils
  * wiringPi : communication avec les broches GPIO du connecteur P1
  * motion : permet de faire du streaming à partir de la caméra
    ([mition](http://www.lavrsen.dk/foswiki/bin/view/Motion/WebHome))
- * hostapd (modifié) : [RTL8188-hostapd](https://github.com/jenssegers/RTL8188-hostapd)
+ * hostapd (modifié) : [RTL8188-hostapd (v1.1)](https://github.com/jenssegers/RTL8188-hostapd)
    * installation sous raspbian : [Realtek RTL8188 based access point on Raspberry Pi](http://jenssegers.be/blog/43/Realtek-RTL8188-based-access-point-on-Raspberry-Pi)
  * Cross Compiling : [crosstool-ng](http://crosstool-ng.org/)
    * installation sous Fedora : [Attila Kanto's Blog](https://akanto.wordpress.com/2012/10/02/cross-compiling-kernel-for-raspberry-pi-on-fedora-17-part-2/)
