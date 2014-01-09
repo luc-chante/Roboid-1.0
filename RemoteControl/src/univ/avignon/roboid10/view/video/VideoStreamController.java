@@ -1,4 +1,4 @@
-package univ.avignon.roboid10.view;
+package univ.avignon.roboid10.view.video;
 
 public interface VideoStreamController {
 

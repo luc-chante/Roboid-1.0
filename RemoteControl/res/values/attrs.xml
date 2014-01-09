@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="JoystickView">
+        <attr name="radius" format="dimension" />
+        <attr name="innerRadius" format="dimension" />
+        <attr name="axes">
+            <flag name="vertical" value="0x01" />
+            <flag name="horizontal" value="0x02" />
+        </attr>
+        <attr name="autoRecentrate" format="boolean" />
+        <attr name="color" format="color" />
+    </declare-styleable>
+
+</resources>

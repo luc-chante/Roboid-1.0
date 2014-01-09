@@ -1,6 +1,6 @@
-package univ.avignon.roboid10.view;
+package univ.avignon.roboid10.view.video;
 
-import univ.avignon.roboid10.view.VideoStreamAsyncClient.OnNextFrameStreamedListener;
+import univ.avignon.roboid10.view.video.VideoStreamAsyncClient.OnNextFrameStreamedListener;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -80,20 +80,24 @@ public class VideoStreamView extends SurfaceView implements
 		}
 	}
 
+	@Override
 	public void setStreamPath(String path) {
 		mPath = path;
 		_start();
 	}
 
+	@Override
 	public void start() {
 		mTargetState = STATE_START;
 		_start();
 	}
 
+	@Override
 	public void stop() {
 		_stop();
 	}
 
+	@Override
 	public void onNextFrameStreamed(Bitmap bitmap) {
 		Bitmap previous;
 		synchronized (mLocker) {
@@ -105,6 +109,7 @@ public class VideoStreamView extends SurfaceView implements
 		}
 	}
 
+	@Override
 	public void run() {
 		Bitmap frame;
 
@@ -142,16 +147,19 @@ public class VideoStreamView extends SurfaceView implements
 		}
 	}
 
+	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		_start();
 	}
 
+	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 			int height) {
 		mWidth = width;
 		mHeight = height;
 	}
 
+	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		_stop();
 	}
