@@ -5,16 +5,17 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 import univ.avignon.roboid10.view.remote.JoystickView;
+import android.util.Log;
 import android.view.MotionEvent;
 
 public class RoboidCrontrol implements JoystickView.OnTouchListener {
 
 	private static final byte CMD_SET_SPEED = 0x01;
+	private static final byte CMD_SET_ACCEL = 0x02;
 
-	private static final int ACCELERATION_MASK = 0x07;
-	public static final int ACCELERATION_DEFAULT = 0x01;
-	public static final int ACCELERATION_SPORT = 0x02;
-	public static final int ACCELERATION_SMOOTH = 0x04;
+	public static final byte ACCELERATION_DEFAULT = 0x01;
+	public static final byte ACCELERATION_SPORT = 0x02;
+	public static final byte ACCELERATION_SMOOTH = 0x04;
 
 	/**
 	 * IP address of the "Roboïd-1.0" accespoint.
@@ -39,7 +40,7 @@ public class RoboidCrontrol implements JoystickView.OnTouchListener {
 	 *
 	 * @see #setAcceleration()
 	 */
-	private int mAcceleration;
+	private byte mAcceleration;
 
 	/**
 	 * Constructor
@@ -110,21 +111,20 @@ public class RoboidCrontrol implements JoystickView.OnTouchListener {
 	 *
 	 * @param acceleration
 	 */
-	public void setAcceleration(int acceleration) {
-		acceleration = acceleration & ACCELERATION_MASK;
+	public void setAccelerationMode(byte acceleration) {
 		if (acceleration != mAcceleration) {
 			switch (acceleration) {
 				case ACCELERATION_DEFAULT:
 					mAcceleration = ACCELERATION_DEFAULT;
-					// sendCmd(am, 0);
+					sendCmd(CMD_SET_ACCEL, ACCELERATION_DEFAULT);
 					break;
 				case ACCELERATION_SPORT:
-					mAcceleration = ACCELERATION_DEFAULT;
-					// sendCmd(am, 1);
+					mAcceleration = ACCELERATION_SPORT;
+					sendCmd(CMD_SET_ACCEL, ACCELERATION_SPORT);
 					break;
 				case ACCELERATION_SMOOTH:
-					mAcceleration = ACCELERATION_DEFAULT;
-					// sendCmd(am, 2);
+					mAcceleration = ACCELERATION_SMOOTH;
+					sendCmd(CMD_SET_ACCEL, ACCELERATION_SMOOTH);
 					break;
 			}
 		}
@@ -144,6 +144,6 @@ public class RoboidCrontrol implements JoystickView.OnTouchListener {
 
 	@Override
 	public void onTouch(JoystickView v, MotionEvent event) {
-
+		Log.v("TOUCH", event.toString());
 	}
 }

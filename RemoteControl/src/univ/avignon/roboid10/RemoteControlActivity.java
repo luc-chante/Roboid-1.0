@@ -7,11 +7,8 @@ import univ.avignon.roboid10.view.remote.JoystickView;
 import univ.avignon.roboid10.view.video.VideoStreamController;
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.MotionEvent;
-import android.view.View;
 
-public class RemoteControlActivity extends Activity implements
-		View.OnTouchListener {
+public class RemoteControlActivity extends Activity {
 
 	VideoStreamController mVideoStream;
 	JoystickView mLeftJoystick, mRightJoystick;
@@ -35,10 +32,9 @@ public class RemoteControlActivity extends Activity implements
 	private void init() {
 
 		mLeftJoystick = (JoystickView) findViewById(R.id.leftJoystick);
-		mLeftJoystick.setOnTouchListener(mController);
-
 		mRightJoystick = (JoystickView) findViewById(R.id.rightJoystick);
-		mRightJoystick.setOnTouchListener(mController);
+
+		LinkedJoystick.link(mController, mLeftJoystick, mRightJoystick);
 
 		mVideoStream = (VideoStreamController) findViewById(R.id.stream);
 		mVideoStream.setStreamPath("http://" + mController.getIpAddr()
@@ -48,17 +44,12 @@ public class RemoteControlActivity extends Activity implements
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mVideoStream.start();
+		// mVideoStream.start();
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		mVideoStream.stop();
-	}
-
-	@Override
-	public boolean onTouch(View v, MotionEvent event) {
-		return false;
+		// mVideoStream.stop();
 	}
 }
