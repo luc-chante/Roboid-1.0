@@ -4,14 +4,14 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 
-import univ.avignon.roboid10.view.remote.JoystickView;
-import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 
-public class RoboidCrontrol implements JoystickView.OnTouchListener {
+public class RoboidCrontrol implements View.OnTouchListener {
 
-	private static final byte CMD_SET_SPEED = 0x01;
-	private static final byte CMD_SET_ACCEL = 0x02;
+	private static final byte CMD_SET_LEFT_SPEED = 0x01;
+	private static final byte CMD_SET_RIGHT_SPEED = 0x02;
+	private static final byte CMD_SET_ACCELERATION = 0x03;
 
 	public static final byte ACCELERATION_DEFAULT = 0x01;
 	public static final byte ACCELERATION_SPORT = 0x02;
@@ -36,11 +36,21 @@ public class RoboidCrontrol implements JoystickView.OnTouchListener {
 	private Socket mSocket;
 
 	/**
+	 * How this controller will interpret touch events.
+	 */
+	private ControllerBehavior mControllerBehavior;
+
+	/**
 	 * Current acceleration mode.
 	 *
 	 * @see #setAcceleration()
 	 */
 	private byte mAcceleration;
+
+	/**
+	 * The array of bytes to send as a command.
+	 */
+	private byte[] mCommand = new byte[2];
 
 	/**
 	 * Constructor
@@ -96,6 +106,17 @@ public class RoboidCrontrol implements JoystickView.OnTouchListener {
 	}
 
 	/**
+	 * Define a new behavior for this controller.
+	 *
+	 * @param handler
+	 *            The new touch event handler
+	 */
+	public void setControllerBehavior(View joystick, ControllerBehavior handler) {
+		mControllerBehavior = handler;
+		joystick.setOnTouchListener(this);
+	}
+
+	/**
 	 * Change the acceleration mode.
 	 *
 	 * The given acceleration mode should be one of the
@@ -113,20 +134,54 @@ public class RoboidCrontrol implements JoystickView.OnTouchListener {
 	 */
 	public void setAccelerationMode(byte acceleration) {
 		if (acceleration != mAcceleration) {
-			switch (acceleration) {
-				case ACCELERATION_DEFAULT:
-					mAcceleration = ACCELERATION_DEFAULT;
-					sendCmd(CMD_SET_ACCEL, ACCELERATION_DEFAULT);
-					break;
-				case ACCELERATION_SPORT:
-					mAcceleration = ACCELERATION_SPORT;
-					sendCmd(CMD_SET_ACCEL, ACCELERATION_SPORT);
-					break;
-				case ACCELERATION_SMOOTH:
-					mAcceleration = ACCELERATION_SMOOTH;
-					sendCmd(CMD_SET_ACCEL, ACCELERATION_SMOOTH);
-					break;
+			try {
+				switch (acceleration) {
+					case ACCELERATION_DEFAULT:
+						mAcceleration = ACCELERATION_DEFAULT;
+						sendCmd(CMD_SET_ACCELERATION, ACCELERATION_DEFAULT);
+						break;
+					case ACCELERATION_SPORT:
+						mAcceleration = ACCELERATION_SPORT;
+						sendCmd(CMD_SET_ACCELERATION, ACCELERATION_SPORT);
+						break;
+					case ACCELERATION_SMOOTH:
+						mAcceleration = ACCELERATION_SMOOTH;
+						sendCmd(CMD_SET_ACCELERATION, ACCELERATION_SMOOTH);
+						break;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
+		}
+	}
+
+	/**
+	 * Set the speed which left engines have to each according to the selected
+	 * acceleration mode.
+	 *
+	 * @param speed
+	 *            The new speed
+	 */
+	public void setLeftEnginesSpeed(byte speed) {
+		try {
+			sendCmd(CMD_SET_LEFT_SPEED, speed);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Set the speed which right engines have to each according to the selected
+	 * acceleration mode.
+	 *
+	 * @param speed
+	 *            The new speed
+	 */
+	public void setRightEnginesSpeed(byte speed) {
+		try {
+			sendCmd(CMD_SET_RIGHT_SPEED, speed);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -137,13 +192,37 @@ public class RoboidCrontrol implements JoystickView.OnTouchListener {
 	 *            The command to send.
 	 * @param value
 	 *            The value of the command the pass
+	 * @throws IOException
 	 */
-	private void sendCmd(byte cmd, byte value) {
-		// mSocket.getOutputStream()
+	void sendCmd(byte cmd, byte value) throws IOException {
+		mCommand[0] = cmd;
+		mCommand[1] = value;
+		mSocket.getOutputStream().write(mCommand, 0, 2);
+		mSocket.getOutputStream().flush();
+		mCommand[0] = 0x00;
+		mCommand[1] = 0x00;
 	}
 
 	@Override
-	public void onTouch(JoystickView v, MotionEvent event) {
-		Log.v("TOUCH", event.toString());
+	public boolean onTouch(View joystick, MotionEvent event) {
+		if (mControllerBehavior != null) {
+			mControllerBehavior.handleTouchEvent(this, joystick.getId(), event);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 *
+	 */
+	public interface ControllerBehavior {
+		/**
+		 *
+		 * @param controller
+		 * @param joystickId
+		 * @param event
+		 */
+		void handleTouchEvent(RoboidCrontrol controller, int joystickId,
+				MotionEvent event);
 	}
 }

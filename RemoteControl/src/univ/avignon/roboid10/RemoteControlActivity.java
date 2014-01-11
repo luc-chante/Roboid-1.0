@@ -3,12 +3,18 @@ package univ.avignon.roboid10;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import univ.avignon.roboid10.view.remote.ClassicControllerBehavior;
 import univ.avignon.roboid10.view.remote.JoystickView;
 import univ.avignon.roboid10.view.video.VideoStreamController;
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.ViewStub;
 
 public class RemoteControlActivity extends Activity {
+
+	public static final String ROBOID_IP = "10.0.0.1";
+	public static final int ROBOID_COMMAND_PORT = 8080;
+	public static final int ROBOID_STREAM_PORT = 8081;
 
 	VideoStreamController mVideoStream;
 	JoystickView mLeftJoystick, mRightJoystick;
@@ -20,36 +26,43 @@ public class RemoteControlActivity extends Activity {
 		setContentView(R.layout.activity_remote_control);
 
 		try {
-			mController = new RoboidCrontrol(InetAddress.getByName("10.0.0.1"),
-					8081);
-			init();
+			init(InetAddress.getByName(ROBOID_IP));
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 			finish();
 		}
 	}
 
-	private void init() {
+	private void init(InetAddress roboidAddr) {
 
-		mLeftJoystick = (JoystickView) findViewById(R.id.leftJoystick);
-		mRightJoystick = (JoystickView) findViewById(R.id.rightJoystick);
+		mController = new RoboidCrontrol(roboidAddr, ROBOID_COMMAND_PORT);
 
-		LinkedJoystick.link(mController, mLeftJoystick, mRightJoystick);
+		ViewStub stub = (ViewStub) findViewById(R.id.viewStubModelRC);
+		ClassicControllerBehavior convertor = (ClassicControllerBehavior) stub
+				.inflate();
+		mController.setControllerBehavior(convertor, convertor);
 
 		mVideoStream = (VideoStreamController) findViewById(R.id.stream);
-		mVideoStream.setStreamPath("http://" + mController.getIpAddr()
-				+ ":8081");
+		mVideoStream.setStreamPath("http://" + ROBOID_IP + ":"
+				+ ROBOID_STREAM_PORT);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		// mVideoStream.start();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				mVideoStream.start();
+				mController.connect();
+			}
+		});
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		// mVideoStream.stop();
+		mVideoStream.stop();
+		mController.close();
 	}
 }

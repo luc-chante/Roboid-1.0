@@ -3,6 +3,7 @@ package univ.avignon.roboid10.view.remote;
 import java.util.ArrayList;
 
 import univ.avignon.roboid10.R;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -78,11 +79,6 @@ public class JoystickView extends View {
 	}
 
 	@Override
-	public void setOnTouchListener(View.OnTouchListener l) {
-		// force to override JoystickView.OnTouchListener
-		setOnTouchListener((OnTouchListener) l);
-	}
-
 	public void setOnTouchListener(OnTouchListener l) {
 		mOnTouchListener = l;
 	}
@@ -96,6 +92,7 @@ public class JoystickView extends View {
 		mTouchY = mCenterY = getMeasuredHeight() / 2f;
 	}
 
+	@SuppressLint("DrawAllocation")
 	@Override
 	protected void onLayout(boolean changed, int left, int top, int right,
 			int bottom) {
@@ -202,14 +199,15 @@ public class JoystickView extends View {
 				mTouchY = dy / d * mInnerMaxRadius + mCenterY;
 			}
 			invalidate();
-			if (mOnTouchListener != null) {
-				boundEvent = MotionEvent.obtainNoHistory(event);
-				boundEvent.setLocation((x - mCenterX) / mInnerMaxRadius,
-						(mCenterY - y) / mInnerMaxRadius);
-			}
+			boundEvent = MotionEvent.obtainNoHistory(event);
+			boundEvent.setLocation((mTouchX - mCenterX) / mInnerMaxRadius,
+					(mCenterY - mTouchY) / mInnerMaxRadius);
 		}
-		if (mOnTouchListener != null && boundEvent != null) {
-			mOnTouchListener.onTouch(this, boundEvent);
+
+		if (boundEvent != null) {
+			if (mOnTouchListener != null) {
+				mOnTouchListener.onTouch(this, boundEvent);
+			}
 			boundEvent.recycle();
 		}
 		return true;
@@ -250,24 +248,5 @@ public class JoystickView extends View {
 			default:
 				return mCalculatedSize;
 		}
-	}
-
-	/**
-	 * Interface definition for a callback to be invoked when a touch event is
-	 * dispatched to this view. The callback will be invoked before the touch
-	 * event is given to the view.
-	 */
-	public interface OnTouchListener {
-		/**
-		 * Called when a touch event is dispatched to a view. This allows
-		 * listeners to get a chance to respond before the target view.
-		 *
-		 * @param v
-		 *            The view the touch event has been dispatched to.
-		 * @param event
-		 *            The MotionEvent object containing full information about
-		 *            the event.
-		 */
-		void onTouch(JoystickView v, MotionEvent event);
 	}
 }
