@@ -13,8 +13,8 @@ import android.view.ViewStub;
 public class RemoteControlActivity extends Activity {
 
 	public static final String ROBOID_IP = "10.0.0.1";
-	public static final int ROBOID_COMMAND_PORT = 8080;
 	public static final int ROBOID_STREAM_PORT = 8081;
+	public static final int ROBOID_COMMAND_PORT = 8082;
 
 	VideoStreamController mVideoStream;
 	JoystickView mLeftJoystick, mRightJoystick;
@@ -35,7 +35,7 @@ public class RemoteControlActivity extends Activity {
 
 	private void init(InetAddress roboidAddr) {
 
-		mController = new RoboidCrontrol(roboidAddr, ROBOID_COMMAND_PORT);
+		mController = new RoboidCrontrol(this, roboidAddr, ROBOID_COMMAND_PORT);
 
 		ViewStub stub = (ViewStub) findViewById(R.id.viewStubModelRC);
 		ClassicControllerBehavior convertor = (ClassicControllerBehavior) stub
@@ -50,13 +50,8 @@ public class RemoteControlActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				mVideoStream.start();
-				mController.connect();
-			}
-		});
+		mVideoStream.start();
+		mController.connect();
 	}
 
 	@Override
