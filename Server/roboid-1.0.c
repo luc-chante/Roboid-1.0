@@ -57,7 +57,7 @@ static inline PI_THREAD(engineController) {
     int s, d;
     int const id = new_engine;
     new_engine = -1;
-    struct engine_s const *E = &(Roboid[engine_num]);
+    struct engine_s const *E = &(Roboid[id]);
     
     piHiPri(50);
     for (;;) {
