@@ -8,13 +8,10 @@ import univ.avignon.roboid10.view.remote.JoystickView;
 import univ.avignon.roboid10.view.video.VideoStreamController;
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ViewStub;
 
 public class RemoteControlActivity extends Activity {
-
-	public static final String ROBOID_IP = "10.0.0.1";
-	public static final int ROBOID_STREAM_PORT = 8081;
-	public static final int ROBOID_COMMAND_PORT = 8082;
 
 	VideoStreamController mVideoStream;
 	JoystickView mLeftJoystick, mRightJoystick;
@@ -26,7 +23,7 @@ public class RemoteControlActivity extends Activity {
 		setContentView(R.layout.activity_remote_control);
 
 		try {
-			init(InetAddress.getByName(ROBOID_IP));
+			init(InetAddress.getByName(RoboidCrontrol.ROBOID_IP));
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 			finish();
@@ -34,30 +31,38 @@ public class RemoteControlActivity extends Activity {
 	}
 
 	private void init(InetAddress roboidAddr) {
-
-		mController = new RoboidCrontrol(this, roboidAddr, ROBOID_COMMAND_PORT);
-
 		ViewStub stub = (ViewStub) findViewById(R.id.viewStubModelRC);
 		ClassicControllerBehavior convertor = (ClassicControllerBehavior) stub
 				.inflate();
+
+		mController = new RoboidCrontrol(this, roboidAddr, RoboidCrontrol.ROBOID_COMMAND_PORT);
 		mController.setControllerBehavior(convertor, convertor);
 
 		mVideoStream = (VideoStreamController) findViewById(R.id.stream);
-		mVideoStream.setStreamPath("http://" + ROBOID_IP + ":"
-				+ ROBOID_STREAM_PORT);
+		mVideoStream.setStreamPath(RoboidCrontrol.getFullStreamUrl());
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
+		Log.v("TEST", "onResume()");
+
 		mVideoStream.start();
+		Log.v("TEST", "mVideoStream started");
+
 		mController.connect();
+		Log.v("TEST", "mController connected");
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
+		Log.v("TEST", "onPause()");
+		
 		mVideoStream.stop();
+		Log.v("TEST", "mVideoStream stoped");
+
 		mController.close();
+		Log.v("TEST", "mController closed");
 	}
 }
