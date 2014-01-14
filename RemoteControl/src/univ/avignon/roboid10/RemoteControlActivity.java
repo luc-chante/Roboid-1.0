@@ -15,15 +15,12 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnLongClickListener;
+import android.util.Log;
 import android.view.ViewStub;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.Toast;
 
 public class RemoteControlActivity extends Activity {
-
-	public static final String ROBOID_IP = "10.0.0.1";
-	public static final int ROBOID_STREAM_PORT = 8081;
-	public static final int ROBOID_COMMAND_PORT = 8082;
 
 	VideoStreamController mVideoStream;
 	JoystickView mLeftJoystick, mRightJoystick;
@@ -35,7 +32,7 @@ public class RemoteControlActivity extends Activity {
 		setContentView(R.layout.activity_remote_control);
 		
 		try {
-			init(InetAddress.getByName(ROBOID_IP));
+			init(InetAddress.getByName(RoboidCrontrol.ROBOID_IP));
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 			finish();
@@ -47,22 +44,17 @@ public class RemoteControlActivity extends Activity {
 	}
 
 	private void init(InetAddress roboidAddr) {
-
-		mController = new RoboidCrontrol(this, roboidAddr, ROBOID_COMMAND_PORT);
-
 		ViewStub stub = (ViewStub) findViewById(R.id.viewStubModelRC);
 		ClassicControllerBehavior convertor = (ClassicControllerBehavior) stub
 				.inflate();
 		currentStub = convertor;
+
+		mController = new RoboidCrontrol(this, roboidAddr, RoboidCrontrol.ROBOID_COMMAND_PORT);
 		mController.setControllerBehavior(convertor, convertor);
 		
 		mVideoStream = (VideoStreamController) findViewById(R.id.stream);
-		mVideoStream.setStreamPath("http://" + ROBOID_IP + ":"
-				+ ROBOID_STREAM_PORT);
-		
-		
-		
 		registerForContextMenu(((View)mVideoStream));
+		mVideoStream.setStreamPath(RoboidCrontrol.getFullStreamUrl());
 	}
 
 	@Override
