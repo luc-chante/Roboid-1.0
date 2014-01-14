@@ -1,13 +1,6 @@
 #ifndef ROBOID_1_0
 #define ROBOID_1_0
 
-typedef enum {
-    ENGINE_FRONT_LEFT,
-    ENGINE_FRONT_RIGHT,
-    ENGINE_REAR_LEFT,
-    ENGINE_REAR_RIGHT
-} Engine;
-
 /**
  * Initialize GPIO mode and defaults values.
  * Should be called at the beginning of the program.
@@ -20,4 +13,19 @@ extern void startRoboid(void);
  */
 extern void haltRoboid(void);
 
+/**
+ * Set speed for the two left engines.
+ */
+extern void setLeftSpeed(signed char speed);
+
+/**
+ * Set speed for the two right engines.
+ */
+extern void setRightSpeed(signed char speed);
+
+/**
+ * Return the left (right) speed in m/s.
+ */
+extern double get_left_speed(void);
+extern double get_right_speed(void);
 #endif // ROBOID_1_0_
