@@ -90,30 +90,32 @@ class VideoStreamAsyncClient extends AsyncTask<String, Bitmap, Void> {
 		mListener.onNextFrameStreamed(values[0]);
 	}
 
-	private byte read(DataInputStream is) throws IOException {
-		byte b = (byte) is.readUnsignedByte();
-		mBuffer.put(b);
-		return b;
-	}
-
 	private Bitmap readBitmap(DataInputStream stream) throws IOException {
 		byte b;
 		byte[] bitmap;
 		int size;
+		boolean store = false;
 
 		bitmap = null;
 		size = 0;
 		do {
-			if (read(stream) == (byte) 0xFF) {
-				b = read(stream);
-				if (b == (byte) 0xD8) {
-					mBuffer.rewind();
+			b = (byte) stream.readUnsignedByte();
+			if (b == (byte) 0xFF) {
+				b = (byte) stream.readUnsignedByte();
+				if (b == (byte) 0xD9) {
 					mBuffer.put((byte) 0xFF);
-					mBuffer.put((byte) 0xD8);
-				} else if (b == (byte) 0xD9) {
+					mBuffer.put((byte) 0xD9);
 					bitmap = mBuffer.array();
 					size = mBuffer.position();
 					mBuffer.rewind();
+					store = false;
+				} else if (b == (byte) 0xD8) {
+					mBuffer.rewind();
+					mBuffer.put((byte) 0xFF);
+					mBuffer.put((byte) 0xD8);
+					store = true;
+				} else if (store) {
+					mBuffer.put(b);
 				}
 			}
 		} while (bitmap == null);

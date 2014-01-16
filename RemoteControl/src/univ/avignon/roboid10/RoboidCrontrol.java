@@ -44,7 +44,7 @@ public class RoboidCrontrol implements View.OnTouchListener {
 
 	/**
 	 * The socket used for the communication.
-	 *
+	 * 
 	 * It should be closed when the application goes to background or quit and
 	 * then recreate when needed.
 	 */
@@ -57,7 +57,7 @@ public class RoboidCrontrol implements View.OnTouchListener {
 
 	/**
 	 * Current acceleration mode.
-	 *
+	 * 
 	 * @see #setAcceleration()
 	 */
 	private byte mAcceleration;
@@ -69,7 +69,7 @@ public class RoboidCrontrol implements View.OnTouchListener {
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param destAddr
 	 *            The IP adrress of Roboïd-1.0
 	 * @param port
@@ -105,6 +105,8 @@ public class RoboidCrontrol implements View.OnTouchListener {
 					}
 				}
 			}).start();
+			Toast.makeText(mContext, "En attente de connexion",
+					Toast.LENGTH_SHORT).show();
 		} else {
 			mConnected.set(false);
 		}
@@ -127,7 +129,7 @@ public class RoboidCrontrol implements View.OnTouchListener {
 
 	/**
 	 * Define a new behavior for this controller.
-	 *
+	 * 
 	 * @param handler
 	 *            The new touch event handler
 	 */
@@ -138,7 +140,7 @@ public class RoboidCrontrol implements View.OnTouchListener {
 
 	/**
 	 * Change the acceleration mode.
-	 *
+	 * 
 	 * The given acceleration mode should be one of the
 	 * RoboidCrontrol#ACCELERATION_XXX constants.
 	 * <ul>
@@ -149,25 +151,25 @@ public class RoboidCrontrol implements View.OnTouchListener {
 	 * <li>{@link RoboidCrontrol#ACCELERATION_SMOOTH}: it is a very smooth
 	 * progressive acceleration (aka natural logarithm).</li>
 	 * </ul>
-	 *
+	 * 
 	 * @param acceleration
 	 */
 	public void setAccelerationMode(byte acceleration) {
 		if (acceleration != mAcceleration) {
 			try {
 				switch (acceleration) {
-					case ACCELERATION_DEFAULT:
-						mAcceleration = ACCELERATION_DEFAULT;
-						sendCmd(CMD_SET_ACCELERATION, ACCELERATION_DEFAULT);
-						break;
-					case ACCELERATION_SPORT:
-						mAcceleration = ACCELERATION_SPORT;
-						sendCmd(CMD_SET_ACCELERATION, ACCELERATION_SPORT);
-						break;
-					case ACCELERATION_SMOOTH:
-						mAcceleration = ACCELERATION_SMOOTH;
-						sendCmd(CMD_SET_ACCELERATION, ACCELERATION_SMOOTH);
-						break;
+				case ACCELERATION_DEFAULT:
+					mAcceleration = ACCELERATION_DEFAULT;
+					sendCmd(CMD_SET_ACCELERATION, ACCELERATION_DEFAULT);
+					break;
+				case ACCELERATION_SPORT:
+					mAcceleration = ACCELERATION_SPORT;
+					sendCmd(CMD_SET_ACCELERATION, ACCELERATION_SPORT);
+					break;
+				case ACCELERATION_SMOOTH:
+					mAcceleration = ACCELERATION_SMOOTH;
+					sendCmd(CMD_SET_ACCELERATION, ACCELERATION_SMOOTH);
+					break;
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -178,7 +180,7 @@ public class RoboidCrontrol implements View.OnTouchListener {
 	/**
 	 * Set the speed which left engines have to each according to the selected
 	 * acceleration mode.
-	 *
+	 * 
 	 * @param speed
 	 *            The new speed
 	 */
@@ -193,7 +195,7 @@ public class RoboidCrontrol implements View.OnTouchListener {
 	/**
 	 * Set the speed which right engines have to each according to the selected
 	 * acceleration mode.
-	 *
+	 * 
 	 * @param speed
 	 *            The new speed
 	 */
@@ -207,7 +209,7 @@ public class RoboidCrontrol implements View.OnTouchListener {
 
 	/**
 	 * Sends a command throw the opened socket to the robot.
-	 *
+	 * 
 	 * @param cmd
 	 *            The command to send.
 	 * @param value
@@ -216,8 +218,6 @@ public class RoboidCrontrol implements View.OnTouchListener {
 	 */
 	void sendCmd(byte cmd, byte value) throws IOException {
 		if (mSocket == null) {
-			Toast.makeText(mContext, "En attente de connexion",
-					Toast.LENGTH_SHORT).show();
 			connect();
 		} else {
 			synchronized (this) {
@@ -245,7 +245,7 @@ public class RoboidCrontrol implements View.OnTouchListener {
 	 */
 	public interface ControllerBehavior {
 		/**
-		 *
+		 * 
 		 * @param controller
 		 * @param joystickId
 		 * @param event
