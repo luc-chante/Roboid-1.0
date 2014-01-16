@@ -33,12 +33,14 @@ public class CaterpillarControllerBehavior extends FrameLayout implements
 	@Override
 	public void handleTouchEvent(RoboidCrontrol controller, int joystickId,
 			MotionEvent event) {
-		final byte speed = (byte) (Math.round(event.getX() * 100) & 0xFF);
+		final byte speed = (byte) (Math.round(event.getY() * 100) & 0xFF);
 		switch (joystickId) {
 			case R.id.leftJoystick:
 				controller.setLeftEnginesSpeed(speed);
+				break;
 			case R.id.rightJoystick:
 				controller.setRightEnginesSpeed(speed);
+				break;
 			default:
 				throw new IllegalArgumentException(joystickId
 						+ " is not a valid Joystick ID");

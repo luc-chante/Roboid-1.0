@@ -10,7 +10,7 @@
      >
 
     <view
-        android:id="@+id/leftJoystick"
+        android:id="@id/leftJoystick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|left"
@@ -19,7 +19,7 @@
         roboid10:radius="75dp" />
 
     <view
-        android:id="@+id/rightJoystick"
+        android:id="@id/rightJoystick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"

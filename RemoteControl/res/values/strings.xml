@@ -2,5 +2,14 @@
 <resources>
 
     <string name="app_name">Roboid-1.0</string>
+    
+    <!-- Menu entries -->
+    <string name="menu_commands">Types de Commandes</string>
+    <string name="menu_item_classic">Commande Classique</string>
+    <string name="menu_item_caterpillars">Engin à Chenilles</string>
+    <string name="menu_accelerations">Modes d\'Accélérations</string>
+    <string name="menu_item_default">Défaut</string>
+    <string name="menu_item_sport">Sport</string>
+    <string name="menu_item_soft">Souple</string>
 
 </resources>

@@ -4,40 +4,42 @@
         android:id="@+id/action_mode"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="Mode d'affichage">
+        android:title="@string/menu_commands">
         <menu>
             <item
-        android:id="@+id/action_mode1"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="Mode1"/>
-        <item
-        android:id="@+id/action_mode2"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="Mode "/>
+                android:id="@+id/action_mode1"
+                android:orderInCategory="100"
+                android:showAsAction="never"
+                android:title="@string/menu_item_classic"/>
+            <item
+                android:id="@+id/action_mode2"
+                android:orderInCategory="100"
+                android:showAsAction="never"
+                android:title="@string/menu_item_caterpillars"/>
         </menu>
-       
-       </item>
-       
-      <item
+    </item>
+    <item
         android:id="@+id/action_Accelearation"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="Acceleration mode">
-       <menu>
+        android:title="@string/menu_accelerations">
+        <menu>
             <item
-        android:id="@+id/action_acc1"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="Acce 1"/>
-        <item
-        android:id="@+id/action_acc2"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-         android:title="Acce 2"/>
-   </menu>
-   
-       
-   </item>
+                android:id="@+id/action_acc1"
+                android:orderInCategory="100"
+                android:showAsAction="never"
+                android:title="@string/menu_item_default"/>
+            <item
+                android:id="@+id/action_acc2"
+                android:orderInCategory="100"
+                android:showAsAction="never"
+                android:title="@string/menu_item_sport"/>
+            <item
+                android:id="@+id/action_acc3"
+                android:orderInCategory="100"
+                android:showAsAction="never"
+                android:title="@string/menu_item_soft"/>
+        </menu>
+    </item>
+
 </menu>
