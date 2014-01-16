@@ -6,7 +6,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <pthread.h>
+#include <wiringPi.h>
 
 #include "roboid-1.0.h"
 
@@ -26,9 +26,6 @@ static pid_t server_pid = -1;
 
 // Remote control of the robot
 static void start_server(void);
-
-// Display current speed
-static void* start_speed_listening(void*);
 
 int main(int argc, char **argv) {
     pid_t pid;
@@ -74,7 +71,7 @@ void start_server(void) {
 		exit(EXIT_FAILURE);
 	}
 	
-	if (listen(server, 1) == -1) {
+	if (listen(server, 3) == -1) {
 		perror("listen");
 		exit(EXIT_FAILURE);
 	}
@@ -110,12 +107,4 @@ void start_server(void) {
             }
         }
     }
-}
-
-static void* start_speed_listening(void *arg) {
-    while (1) {
-        printf("\x0D%.2g | %.2g", get_left_speed(), get_right_speed());
-        usleep(500000);
-    }
-    return NULL;
 }

@@ -1,6 +1,9 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
+#include <sys/time.h>
+
+#define MAX_SPEED 100
 // Number of ticks for a complete rotation of a wheel
 #define NB_TICK_TOTAL 10
 // Number of ticks used to calculate the actual speed
@@ -12,15 +15,15 @@
 
 typedef struct {
     struct {
-        int const pwm;
-        int const in1;
-        int const in2;
+        int pwm;
+        int in1;
+        int in2;
     } front;
     
     struct {
-        int const pwm;
-        int const in1;
-        int const in2;
+        int pwm;
+        int in1;
+        int in2;
     } rear;
     
     struct {
@@ -33,14 +36,10 @@ typedef struct {
 } Engine;
 
 extern void Engine_initialise(Engine *E,
-        int const front_pwm,
-        int const front_in1,
-        int const front_in2,
-        int const rear_pwm,
-        int const rear_in1,
-        int const rear_in2);
+        int front_pwm, int front_in1, int front_in2,
+        int rear_pwm, int rear_in1, int rear_in2);
 
-extern void Engine_set_speed(int speed);
+extern void Engine_set_speed(Engine *E, int speed);
 
 extern void Engine_update_instantaneous_speed(Engine *E);
 

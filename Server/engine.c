@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <wiringPi.h>
+
 #include "engine.h"
 
 #define min(X, Y) ((X) < (Y) ? X : Y)
@@ -13,14 +17,14 @@ static void Engine_clear_speed_stats(Engine *E) {
     E->stats.pos = 0;
 }
 
-Engine *dummy = NULL;
+Engine *new_engine = NULL;
 
 static PI_THREAD(Engine_start) {
     Engine *E;
     int sign, speed, delay;
     
-    E = dummy;
-    dummy = NULL;
+    E = new_engine;
+    new_engine = NULL;
     
     pinMode(E->front.pwm, OUTPUT);
     pinMode(E->front.in1, OUTPUT);
@@ -39,7 +43,7 @@ static PI_THREAD(Engine_start) {
     piHiPri(50);
     while (1) {
         speed = E->speed;
-        delay = MAX_SPEED - abs(s);
+        delay = MAX_SPEED - abs(speed);
         
         if (speed > 0 && sign == -1) {
             digitalWrite(E->front.in1, HIGH);
@@ -57,7 +61,7 @@ static PI_THREAD(Engine_start) {
         }
         digitalWrite(E->front.pwm, HIGH - (speed == 0));
         digitalWrite(E->rear.pwm, HIGH - (speed == 0));
-        delayMicroseconds(abs(s) * 100);
+        delayMicroseconds(abs(speed) * 100);
         
         digitalWrite(E->front.pwm, LOW + (delay == 0));
         digitalWrite(E->rear.pwm, LOW + (delay == 0));
@@ -68,12 +72,8 @@ static PI_THREAD(Engine_start) {
 }
 
 void Engine_initialise(Engine *E,
-        int const front_pwm,
-        int const front_in1,
-        int const front_in2,
-        int const rear_pwm,
-        int const rear_in1,
-        int const rear_in2) {
+        int front_pwm, int front_in1, int front_in2,
+        int rear_pwm, int rear_in1, int rear_in2) {
     E->front.pwm = front_pwm;
     E->front.in1 = front_in1;
     E->front.in2 = front_in2;
@@ -83,15 +83,16 @@ void Engine_initialise(Engine *E,
     
     Engine_clear_speed_stats(E);
     
-    while (dummy != NULL) {
+    new_engine = E;
+    piThreadCreate(Engine_start);
+    
+    while (new_engine != NULL) {
         delay(1);
     }
     
-    dummy = E;
-    piThreadCreate(Engine_start);
 }
 
-void Engine_set_speed(int speed) {
+void Engine_set_speed(Engine *E, int speed) {
     if (speed == 0) {
         Engine_clear_speed_stats(E);
     }
@@ -99,8 +100,8 @@ void Engine_set_speed(int speed) {
 }
 
 void Engine_update_instantaneous_speed(Engine *E) {
-    gettimeofday(&(E->stats.ticks[E->stats.pos]), NULL);
 	E->stats.pos = (E->stats.pos + 1) % NB_TICK;
+    gettimeofday(&(E->stats.ticks[E->stats.pos]), NULL);
 }
 
 double Engine_get_instantaneous_speed(Engine *E) {

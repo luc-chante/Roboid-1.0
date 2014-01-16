@@ -14,8 +14,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewStub;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class RemoteControlActivity extends Activity {
+public class RemoteControlActivity extends Activity implements
+		RoboidCrontrol.ConnectionListener {
 
 	VideoStreamController mVideoStream;
 	JoystickView mLeftJoystick, mRightJoystick;
@@ -40,23 +42,21 @@ public class RemoteControlActivity extends Activity {
 		mVideoStream = (VideoStreamController) findViewById(R.id.stream);
 		registerForContextMenu(((View) mVideoStream));
 		mVideoStream.setStreamPath(RoboidCrontrol.getFullStreamUrl());
-		
-		mController = new RoboidCrontrol(this, roboidAddr, RoboidCrontrol.ROBOID_COMMAND_PORT);
 
-		txt_vitesse = (TextView) findViewById(R.id.txt_vitesse);
+		mController = new RoboidCrontrol(roboidAddr,
+				RoboidCrontrol.ROBOID_COMMAND_PORT);
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
-		//mVideoStream.start();
-		mController.connect();
+	protected void onStart() {
+		super.onStart();
+		mController.connect(this);
 	}
 
 	@Override
-	protected void onPause() {
-		super.onPause();
-		//mVideoStream.stop();
+	protected void onStop() {
+		super.onStop();
+		mVideoStream.stop();
 		mController.close();
 	}
 
@@ -67,16 +67,19 @@ public class RemoteControlActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 
 	}
-	
+
 	private void setController(int viewId, int viewStubId) {
 		View view;
-	
+
+		if (currentConvertor != null) {
+			currentConvertor.setVisibility(View.GONE);
+		}
+
 		view = findViewById(viewId);
 		if (view == null) {
 			view = ((ViewStub) findViewById(viewStubId)).inflate();
 		}
 		if (currentConvertor != view) {
-			currentConvertor.setVisibility(View.GONE);
 			view.setVisibility(View.VISIBLE);
 			mController.setControllerBehavior(view, (ControllerBehavior) view);
 			currentConvertor = view;
@@ -86,14 +89,27 @@ public class RemoteControlActivity extends Activity {
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.action_mode1) {
-			setController(R.id.view_model_rc_controller, R.id.viewStubModelRC);
+			setController(R.id.view_classic_controller, R.id.viewStubModelRC);
 			return true;
 		} else if (item.getItemId() == R.id.action_mode2) {
-			setController(R.id.view_caterpillar_controller, R.id.viewStubCaterpillar);
+			setController(R.id.view_caterpillar_controller,
+					R.id.viewStubCaterpillar);
 			return true;
 		}
 
 		return super.onContextItemSelected(item);
+	}
+
+	@Override
+	public void OnConnectionOpened() {
+		setController(R.id.view_classic_controller, R.id.viewStubModelRC);
+		mVideoStream.start();
+	}
+
+	@Override
+	public void OnConnectionFailed() {
+		Toast.makeText(this, "Connexion avec Roboïd-1.0 impossible", Toast.LENGTH_LONG).show();
+		finish();
 	}
 
 }

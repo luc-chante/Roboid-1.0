@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -g3 -DNDEBUG
 LIBS = -lwiringPi -lm
-SRCS = roboid-1.0.c server.c
+SRCS = $(wildcard *.c)
 OBJS = $(SRCS:.c=.o)
 TARGET = server
 
