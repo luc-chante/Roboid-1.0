@@ -4,7 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
+import java.util.Properties;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -19,7 +19,7 @@ class VideoStreamAsyncClient extends AsyncTask<String, Bitmap, Void> {
 
 	AndroidHttpClient mClient;
 	HttpUriRequest mRequest;
-	ByteBuffer mBuffer;
+	byte[] mByteArray;
 
 	OnNextFrameStreamedListener mListener;
 
@@ -46,7 +46,7 @@ class VideoStreamAsyncClient extends AsyncTask<String, Bitmap, Void> {
 		super.onPreExecute();
 
 		mClient = AndroidHttpClient.newInstance("(Roboïd-1.0)");
-		mBuffer = ByteBuffer.allocate(40960);
+		mByteArray = new byte[4096];
 	}
 
 	@Override
@@ -91,37 +91,48 @@ class VideoStreamAsyncClient extends AsyncTask<String, Bitmap, Void> {
 	}
 
 	private Bitmap readBitmap(DataInputStream stream) throws IOException {
-		byte b;
-		byte[] bitmap;
+		int p = 0;
 		int size;
-		boolean store = false;
 
-		bitmap = null;
-		size = 0;
 		do {
-			b = (byte) stream.readUnsignedByte();
-			if (b == (byte) 0xFF) {
-				b = (byte) stream.readUnsignedByte();
-				if (b == (byte) 0xD9) {
-					mBuffer.put((byte) 0xFF);
-					mBuffer.put((byte) 0xD9);
-					bitmap = mBuffer.array();
-					size = mBuffer.position();
-					mBuffer.rewind();
-					store = false;
-				} else if (b == (byte) 0xD8) {
-					mBuffer.rewind();
-					mBuffer.put((byte) 0xFF);
-					mBuffer.put((byte) 0xD8);
-					store = true;
-				} else if (store) {
-					mBuffer.put(b);
-				}
-			}
-		} while (bitmap == null);
+			do {
+				mByteArray[p] = (byte) stream.readUnsignedByte();
+				p++;
+				stream.mark(mByteArray.length - p);
+			} while (mByteArray[p - 1] != (byte) 0xFF);
+			mByteArray[p] = (byte) stream.readUnsignedByte();
+			p++;
+		} while (mByteArray[p - 1] != (byte) 0xD8);
 
-		return BitmapFactory.decodeStream(new ByteArrayInputStream(bitmap, 0,
-				size));
+		Properties props = new Properties();
+		props.load(new ByteArrayInputStream(mByteArray, 0, p));
+		size = Integer.parseInt(props.getProperty("Content-Length", "-1"));
+
+		if (size > 0 && mByteArray.length < size) {
+			mByteArray = new byte[size];
+			mByteArray[0] = (byte) 0xFF;
+			mByteArray[1] = (byte) 0xD8;
+			stream.readFully(mByteArray, 2, size - 2);
+			return BitmapFactory.decodeStream(new ByteArrayInputStream(mByteArray));
+		}
+
+		mByteArray[0] = (byte) 0xFF;
+		mByteArray[1] = (byte) 0xD8;
+		p = 2;
+
+		do {
+			do {
+				if (p > (mByteArray.length - 2)) {
+					return null;
+				}
+				mByteArray[p] = (byte) stream.readUnsignedByte();
+				p++;
+			} while (mByteArray[p - 1] != (byte) 0xFF);
+			mByteArray[p] = (byte) stream.readUnsignedByte();
+			p++;
+		} while (mByteArray[p - 1] != (byte) 0xD9);
+
+		return BitmapFactory.decodeStream(new ByteArrayInputStream(mByteArray, 0, p));
 	}
 
 	interface OnNextFrameStreamedListener {

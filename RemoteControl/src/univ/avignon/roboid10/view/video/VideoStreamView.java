@@ -47,13 +47,16 @@ public class VideoStreamView extends SurfaceView implements
 	}
 
 	private void init() {
-		mPaintingThread = new Thread(this);
 		getHolder().addCallback(this);
 	}
 
 	private synchronized void _start() {
 		if (mClient == null) {
 			mClient = new VideoStreamAsyncClient(this);
+		}
+		if (mPaintingThread == null) {
+			mPaintingThread = new Thread(this);
+			mPaintingThread.setPriority(Thread.MIN_PRIORITY);
 		}
 		if (mTargetState == STATE_START
 				&& mClient.getStatus() == Status.PENDING && mPath != null) {
@@ -69,14 +72,9 @@ public class VideoStreamView extends SurfaceView implements
 			mClient = null;
 			mTargetState = STATE_IDLE;
 		}
-		boolean retry = true;
-		while (retry) {
-			try {
-				mPaintingThread.join();
-				retry = false;
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+		if (mPaintingThread != null) {
+			mPaintingThread.interrupt();
+			mPaintingThread = null;
 		}
 	}
 
