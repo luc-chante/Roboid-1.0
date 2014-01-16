@@ -2,23 +2,20 @@ package univ.avignon.roboid10;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+
+import univ.avignon.roboid10.view.remote.CaterpillarControllerBehavior;
 import univ.avignon.roboid10.view.remote.ClassicControllerBehavior;
 import univ.avignon.roboid10.view.remote.JoystickView;
 import univ.avignon.roboid10.view.video.VideoStreamController;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.ClipData.Item;
 import android.os.Bundle;
 import android.view.ContextMenu;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.SubMenu;
-import android.view.View;
-import android.view.View.OnLongClickListener;
-import android.util.Log;
-import android.view.ViewStub;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.Toast;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewStub;
+import android.widget.TextView;
 
 public class RemoteControlActivity extends Activity {
 
@@ -26,6 +23,8 @@ public class RemoteControlActivity extends Activity {
 	JoystickView mLeftJoystick, mRightJoystick;
 	RoboidCrontrol mController;
 	View currentStub;
+	TextView txt_vitesse;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,13 +47,14 @@ public class RemoteControlActivity extends Activity {
 		ClassicControllerBehavior convertor = (ClassicControllerBehavior) stub
 				.inflate();
 		currentStub = convertor;
-
 		mController = new RoboidCrontrol(this, roboidAddr, RoboidCrontrol.ROBOID_COMMAND_PORT);
 		mController.setControllerBehavior(convertor, convertor);
 		
 		mVideoStream = (VideoStreamController) findViewById(R.id.stream);
 		registerForContextMenu(((View)mVideoStream));
 		mVideoStream.setStreamPath(RoboidCrontrol.getFullStreamUrl());
+	
+	     txt_vitesse = (TextView) findViewById(R.id.txt_vitesse);
 	}
 
 	@Override
@@ -87,32 +87,42 @@ public class RemoteControlActivity extends Activity {
 		
 		if( item.getItemId() == R.id.action_mode1){
 			
-			ViewStub stub = (ViewStub) findViewById(R.id.viewStubModelRC);
-			
-			if(currentStub.isInLayout()){
-			
-				View view =  stub.inflate();
-				currentStub = stub;
-				}
-			if(	true){
-				currentStub.setVisibility(View.GONE);	
+			View view = (View) findViewById(R.id.view_model_rc_controller);
+			if(view == null) {
+				ViewStub stub = (ViewStub) findViewById(R.id.viewStubModelRC);
+				ClassicControllerBehavior convertor = (ClassicControllerBehavior) stub
+						.inflate();
+
+				view = convertor;
+				mController.setControllerBehavior(convertor, convertor);
 			}
+			
+			currentStub.setVisibility(View.GONE);
+		    currentStub = view;
+		    currentStub.setVisibility(View.VISIBLE);	
+			
 	
 			
 			
 		}
 		else if(item.getItemId() == R.id.action_mode2){
-			Toast.makeText(getApplicationContext(), "mode 2", Toast.LENGTH_LONG).show();
+
+			View view = (View) findViewById(R.id.view_caterpillar_controller);
 			
+			if(view == null){
+				ViewStub stub = (ViewStub) findViewById(R.id.viewStubCaterpillar);
+				CaterpillarControllerBehavior convertor = (CaterpillarControllerBehavior) stub
+					.inflate();	
+			view = convertor;
+			mController.setControllerBehavior(convertor, convertor);
 			
-			
-			ViewStub stub = (ViewStub) findViewById(R.id.viewStubCaterpillar);
-			
-			if(currentStub.isAttachedToWindow()){
-			currentStub.setVisibility(View.GONE);
-			View view =  stub.inflate();
-			currentStub = stub;
 			}
+				currentStub.setVisibility(View.GONE);
+			    currentStub = view;
+			    currentStub.setVisibility(View.VISIBLE);
+			
+				
+		
 			
 		}
 		

@@ -16,12 +16,48 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout="@layout/model_rc_controller" />
-
+    
     <ViewStub
         android:id="@+id/viewStubCaterpillar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout="@layout/caterpillar_controller" />
+    
+    
+
+   
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="30dp"
+        android:textColor="#0099ff"
+        android:textSize="28sp"
+        android:text="Vitesse :"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/txt_vitesse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textView1"
+        android:layout_alignBottom="@+id/textView1"
+        android:layout_marginLeft="19dp"
+        android:layout_toRightOf="@+id/textView1"
+        android:textColor="#0099ff"
+        android:textSize="28sp"
+        android:text="10 m/s"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+        
+    </RelativeLayout>
 
 </merge>

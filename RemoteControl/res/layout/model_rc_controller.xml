@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     class="univ.avignon.roboid10.view.remote.ClassicControllerBehavior"
-    tools:context=".RemoteControlActivity" >
+    tools:context=".RemoteControlActivity"
+    android:id="@+id/view_model_rc_controller" >
 
     <view
         android:id="@+id/leftJoystick"

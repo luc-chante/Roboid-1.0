@@ -15,13 +15,12 @@
         android:id="@+id/action_mode2"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="Mode2"/>
+        android:title="Mode "/>
         </menu>
-    </item>
-    
-    
-    
-   <item
+       
+       </item>
+       
+      <item
         android:id="@+id/action_Accelearation"
         android:orderInCategory="100"
         android:showAsAction="never"

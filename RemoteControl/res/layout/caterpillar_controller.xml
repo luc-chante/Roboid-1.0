@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     class="univ.avignon.roboid10.view.remote.CaterpillarControllerBehavior"
-    tools:context=".RemoteControlActivity" >
+    tools:context=".RemoteControlActivity"
+    android:id="@+id/view_caterpillar_controller"
+     >
 
     <view
         android:id="@+id/leftJoystick"
