@@ -1,3 +1,5 @@
+The project is ended since janury 2014
+
 Roboid-1.0
 ==========
 
